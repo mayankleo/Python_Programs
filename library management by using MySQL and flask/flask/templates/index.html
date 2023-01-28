@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <title>Library</title>
+</head>
+
+<body>
+    <div class="container text-center h2">Library Management</div>
+    <br>
+    <br>
+    <div class="container">
+        <h2>Book lists</h2>
+        <button onclick="books()">Refresh Books</button>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Sno</th>
+                <th scope="col">Book ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Author</th>
+                <th scope="col">Category</th>
+                <th scope="col">Quentity</th>
+              </tr>
+            </thead>
+            <tbody id="bb">
+            </tbody>
+          </table>
+    </div>
+    <br>
+    <div class="container">
+        <br>
+        <hr>
+        <h2>Book Issue</h2>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Name</span>
+            <input type="text" class="form-control" id="pn" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Person Unique ID</span>
+            <input type="text" class="form-control" id="pi" placeholder="UID" aria-label="Username">
+            <span class="input-group-text">Book ID</span>
+            <input type="text" class="form-control" id="bid" placeholder="Book ID" aria-label="Server">
+          </div>
+          <button onclick="issue()">Issue</button>
+    </div>
+    <br>
+    <div class="container">
+        <br>
+        <hr>
+        <h2>Book Submit</h2>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Person Unique ID</span>
+            <input type="text" class="form-control" id="spi" placeholder="UID" aria-label="Username">
+            <span class="input-group-text">Book ID</span>
+            <input type="text" class="form-control" id="sbid" placeholder="Book ID" aria-label="Server">
+          </div>
+          <button onclick="submit()">Submit</button>
+    </div>
+    <br>
+    <div class="container">
+        <br>
+        <hr>
+        <h2>Book Add</h2>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Title</span>
+            <input type="text" class="form-control" id="at" placeholder="Title" aria-label="Username">
+            <span class="input-group-text">Author</span>
+            <input type="text" class="form-control" id="aa" placeholder="Author" aria-label="Server">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Category</span>
+            <input type="text" class="form-control" id="ac" placeholder="Category" aria-label="Username">
+            <span class="input-group-text">Quentity</span>
+            <input type="text" class="form-control" id="aq" placeholder="Quentity (leave for default)" aria-label="Server">
+          </div>
+          <button onclick="add()">Add</button>
+    </div>
+    <br>
+    <div class="container">
+        <br>
+        <hr>
+        <h2>Book Delete</h2>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Book ID</span>
+            <input type="text" class="form-control" id="dbid" placeholder="Book ID" aria-label="Server">
+          </div>
+          <button onclick="delet()">Detele</button>
+    </div>
+    <br>
+    <br>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script>
+        function books() {
+            document.getElementById("bb").innerHTML="";
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://127.0.0.1:5000/books");
+            xhr.send();
+            xhr.responseType = "json";
+            xhr.onload = () => {
+                data = xhr.response;
+                for(let i=0;i<data.length;i++){
+                    document.getElementById("bb").innerHTML += `<tr><th scope="row">${i+1}</th><td>${data[i].id}</td><td>${data[i].title}</td><td>${data[i].author}</td><td>${data[i].category}</td><td>${data[i].quantity}</td></tr>`
+                }
+            };
+        }
+        function issue() {
+            document.getElementById("bb").innerHTML="";
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `http://127.0.0.1:5000/issue/${document.getElementById("pn").value}/${document.getElementById("pi").value}/${document.getElementById("bid").value}`);
+            xhr.send();
+            xhr.responseType = "json";
+            xhr.onload = () => {
+                data = xhr.response;
+                if(data.status==200){
+                    alert("Book Issued!!")
+                    books()
+                }
+            };
+        }
+        function submit() {
+            document.getElementById("bb").innerHTML="";
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `http://127.0.0.1:5000/submit/${document.getElementById("spi").value}/${document.getElementById("sbid").value}`);
+            xhr.send();
+            xhr.responseType = "json";
+            xhr.onload = () => {
+                data = xhr.response;
+                if(data.status==200){
+                    alert("Book Submited!!")
+                    books()
+                }
+            };
+        }
+        function add() {
+            document.getElementById("bb").innerHTML="";
+            const xhr = new XMLHttpRequest();
+            if(document.getElementById("aq").value==""){
+                xhr.open("GET", `http://127.0.0.1:5000/add/${document.getElementById("at").value}/${document.getElementById("aa").value}/${document.getElementById("ac").value}`);
+            }else{
+                xhr.open("GET", `http://127.0.0.1:5000/add/${document.getElementById("at").value}/${document.getElementById("aa").value}/${document.getElementById("ac").value}/${document.getElementById("aq").value}`);
+            }
+            xhr.send();
+            xhr.responseType = "json";
+            xhr.onload = () => {
+                data = xhr.response;
+                if(data.status==200){
+                    alert("Book Added!!")
+                    books()
+                }
+            };
+        }
+        function delet() {
+            document.getElementById("bb").innerHTML="";
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `http://127.0.0.1:5000/delete/${document.getElementById("dbid").value}`);
+            xhr.send();
+            xhr.responseType = "json";
+            xhr.onload = () => {
+                data = xhr.response;
+                if(data.status==200){
+                    alert("Book Deleted!!")
+                    books()
+                }
+            };
+        }
+        books()
+    </script>
+</body>
+
+</html>
